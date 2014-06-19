@@ -1,0 +1,19 @@
+[
+{
+  "modid": "HideNames",
+  "name": "Hide Names",
+  "description": "Adds commands to hide and show the name that displays above your head",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "logoFile": "",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["thislooksfun"],
+  "credits": "",
+  "parent": "",
+  "screenshots": [],
+  "dependencies": [
+    "commandapi"
+  ]
+}
+]

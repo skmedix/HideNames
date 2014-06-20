@@ -1,30 +1,5 @@
 package com.tlf.HN.common;
 
-import com.tlf.HN.commands.CommandName;
-import com.tlf.HN.commands.CommandNames;
-import com.tlf.HN.event.HNEventHandler;
-import com.tlf.HN.network.PacketHandler;
-import com.tlf.HN.network.packet.IPacket;
-import com.tlf.HN.network.packet.PacketHideNameChange;
-import com.tlf.commandapi.common.CommandAPI;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.ModMetadata;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.relauncher.Side;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -40,7 +15,30 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION, dependencies = "required-after:commandapi")
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+
+import com.tlf.HN.commands.CommandName;
+import com.tlf.HN.event.HNEventHandler;
+import com.tlf.HN.network.PacketHandler;
+import com.tlf.HN.network.packet.IPacket;
+import com.tlf.HN.network.packet.PacketHideNameChange;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.relauncher.Side;
+
+@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION)
 public class HideNames
 {	
 	public static final String MODID = "hidenames";
@@ -61,9 +59,9 @@ public class HideNames
 	public Map<String, Boolean> hiddenPlayers = new HashMap<String, Boolean>();
 	public Logger logger = Logger.getLogger("Minecraft");
 	
-	public final int commandPermissionLevel = 0;
-	public final String commandName1 = "name";
-	public final String commandName2 = "names";
+	public static final int commandPermissionLevel = 0;
+	public static final String commandName1 = "name";
+	public static final String commandName2 = "names";
 	
 	/** The path to the file hidden.txt */
 	public String fileHiddenPlayers;
@@ -103,8 +101,7 @@ public class HideNames
 		
 		MinecraftForge.EVENT_BUS.register(new HNEventHandler(side == Side.CLIENT));
 		
-		CommandAPI.addPlayerCommand(new CommandName());
-		CommandAPI.addPlayerCommand(new CommandNames());
+		//CommandAPI.addPlayerCommand(new CommandName());
 		
 		this.packetHandler.initalise();
 	}
@@ -118,7 +115,9 @@ public class HideNames
 	}
 	
 	@EventHandler
-	public void serverStarting(FMLServerStartingEvent event) {
+	public void serverStarting(FMLServerStartingEvent event)
+	{
+		event.registerServerCommand(new CommandName());
 		getFilePath();
 		getHiddenPlayers();
 	}

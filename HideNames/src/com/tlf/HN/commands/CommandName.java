@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,13 +19,23 @@ public class CommandName extends CommandBase
 	@Override
 	public String getCommandName()
 	{
-		return HideNames.instance.commandName1;
+		return HideNames.commandName1;
 	}
 
 	@Override
 	public int getRequiredPermissionLevel()
 	{
 		return HideNames.instance.commandPermissionLevel;
+	}
+	
+	@Override
+	public List getCommandAliases()
+	{
+		List list = new ArrayList();
+		list.add(HideNames.commandName1);
+		list.add(HideNames.commandName2);
+		
+		return list;
 	}
 
 	@Override
@@ -36,6 +47,11 @@ public class CommandName extends CommandBase
 		} else {
 			return "/name(s) <toggle|on|off|status>";
 		}
+	}
+	
+	@Override
+	public boolean canCommandSenderUseCommand(ICommandSender sender) {
+		return true;
 	}
 
 	@Override

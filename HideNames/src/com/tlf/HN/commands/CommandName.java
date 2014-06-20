@@ -71,7 +71,7 @@ public class CommandName extends CommandBase
 		if (par2ArrayOfStr.length > 0) {
 			if ("toggle".equalsIgnoreCase(par2ArrayOfStr[0])) {
 				
-				HideNames.instance.updateHiddenPlayers(player.getCommandSenderName().toLowerCase(), HideNames.instance.hiddenPlayers.get(player.getCommandSenderName().toLowerCase()));
+				HideNames.instance.updateHiddenPlayers(player.getCommandSenderName().toLowerCase(), !HideNames.instance.hiddenPlayers.get(player.getCommandSenderName().toLowerCase()));
 				
 				player.addChatMessage(new ChatComponentText("Your name is now: " + (HideNames.instance.hiddenPlayers.get(player.getCommandSenderName().toLowerCase()) ? "\u00a7aHidden" : "\u00a74Visible")));
 

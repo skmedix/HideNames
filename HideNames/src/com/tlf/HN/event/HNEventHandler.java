@@ -29,8 +29,10 @@ public class HNEventHandler
 	@SideOnly(Side.CLIENT)
 	public void onRenderLiving(RenderLivingEvent.Specials.Pre event)
 	{
-		if (event.entity instanceof EntityPlayer) {
-			if (event.isCancelable()) {
+		if (event.entity instanceof EntityPlayer)
+		{
+			if (event.isCancelable())
+			{
 				Object hidden = HideNames.instance.hiddenPlayers.get(event.entity.getCommandSenderName().toLowerCase());
 				if (hidden != null && (Boolean)hidden) {
 					event.setCanceled(true);
@@ -42,6 +44,7 @@ public class HNEventHandler
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
+		System.out.println("Player logged in!");
 		if (!client) {
 			HideNames.instance.onClientConnect(event.player);
 		}
@@ -58,7 +61,6 @@ public class HNEventHandler
 	private void onTickInGame() 
 	{
 		int tickCount = 0;
-		String[] users = MinecraftServer.getServer().getAllUsernames();
 		
 		if (!HideNames.instance.saveOfflinePlayers)
 		{
@@ -67,6 +69,7 @@ public class HNEventHandler
 		
 		HideNames.instance.checkFile();
 		
+		String[] users = MinecraftServer.getServer().getAllUsernames();
 		for (int i = 0; i < users.length; i++) {
 			if (!HideNames.instance.hiddenPlayers.containsKey(users[i].toLowerCase()) || HideNames.instance.hiddenPlayers.get(users[i].toLowerCase()) == null)
 			{

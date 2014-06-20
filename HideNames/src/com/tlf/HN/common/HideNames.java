@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.MinecraftForge;
@@ -23,9 +24,7 @@ import net.minecraftforge.common.config.Configuration;
 
 import com.tlf.HN.commands.CommandName;
 import com.tlf.HN.event.HNEventHandler;
-import com.tlf.HN.network.PacketHandler;
-import com.tlf.HN.network.packet.IPacket;
-import com.tlf.HN.network.packet.PacketHideNameChange;
+import com.tlf.HN.network.packet.PacketHNChange;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -36,6 +35,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION)
@@ -54,6 +55,7 @@ public class HideNames
 	
 	/** The channel that Hide Names uses for custom packets */
 	public String channel;
+	public SimpleNetworkWrapper network;
 	
 	/** All players currently in the file {@link #fileHiddenPlayers hidden.txt} */
 	public Map<String, Boolean> hiddenPlayers = new HashMap<String, Boolean>();
@@ -74,8 +76,6 @@ public class HideNames
 	
 	private ModMetadata metadata;
 	
-	private PacketHandler packetHandler = new PacketHandler();
-	
 	@EventHandler
 	public void onPreInit(FMLPreInitializationEvent event)
 	{
@@ -92,6 +92,9 @@ public class HideNames
 		clientFilePath = config.get(Configuration.CATEGORY_GENERAL, "clientFilePath", "/config/tlf", "Where the file 'hidden.txt' should be on a client/LAN server - NOTE: all directories are located within the '.minecraft' folder").getString();
 		
 		config.save();
+		
+		this.network = NetworkRegistry.INSTANCE.newSimpleChannel(this.channel);
+		this.network.registerMessage(PacketHNChange.Handler.class, PacketHNChange.class, 0, Side.CLIENT);
 	}
 	
 	@EventHandler
@@ -100,17 +103,11 @@ public class HideNames
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		
 		MinecraftForge.EVENT_BUS.register(new HNEventHandler(side == Side.CLIENT));
-		
-		//CommandAPI.addPlayerCommand(new CommandName());
-		
-		this.packetHandler.initalise();
 	}
 	
 	@EventHandler
 	public void onModLoad(FMLPostInitializationEvent event)
-	{
-		this.packetHandler.postInitialise();
-		
+	{		
 		System.out.println(metadata.name + " " + metadata.version + " loaded!");
 	}
 	
@@ -209,12 +206,19 @@ public class HideNames
 	 */
 	public void onClientConnect(EntityPlayer player)
 	{
+		Iterator<String> iterator = hiddenPlayers.keySet().iterator();
+		while (iterator.hasNext()) {
+			String user = iterator.next();
+			this.network.sendTo(new PacketHNChange(user, hiddenPlayers.get(user)), (EntityPlayerMP)player);
+			System.out.println("Send data to " + player.getCommandSenderName());
+		}
+		
 		String username = player.getCommandSenderName().toLowerCase();
 		
-		if (hiddenPlayers.get(username) != null) {
-			updateHiddenPlayers(username, hiddenPlayers.get(username));
-		} else {
+		if (hiddenPlayers.get(username) == null) {
 			updateHiddenPlayers(username, defaultHiddenStatus);
+		} else {
+			updateHiddenPlayers(username, hiddenPlayers.get(username));
 		}
 		
 		player.addChatMessage(new ChatComponentText("Your name is: " + (hiddenPlayers.get(username) ? "\u00a7aHidden" : "\u00a74Visible")));
@@ -227,8 +231,7 @@ public class HideNames
 	public void createFile(String file)
 	{
 		try
-		{ 
-			System.out.println(file);
+		{
 			FileWriter fstream = new FileWriter(file);
 			BufferedWriter out = new BufferedWriter(fstream);
 			out.write("#List of Hidden Players");
@@ -280,11 +283,11 @@ public class HideNames
 		if (side == Side.SERVER) {
 			username = username.toLowerCase();
 			
+			hiddenPlayers.remove(username);
 			hiddenPlayers.put(username, hidden);
 			refreshFile(fileHiddenPlayers);
 			
-			IPacket packet = new PacketHideNameChange(username, hidden);
-			this.packetHandler.sendToAll(packet);
+			this.network.sendToAll(new PacketHNChange(username, hidden));
 		}
 	}
 	
@@ -340,10 +343,5 @@ public class HideNames
 		{
 			createFile(fileHiddenPlayers);
 		}
-	}
-	
-	public PacketHandler getPacketHandler()
-	{
-		return this.packetHandler;
 	}
 }

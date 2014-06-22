@@ -19,4 +19,6 @@ All those shown above, plus:
 * /name option allowCommand – Whether or not non-ops can use the /name command at all.
 
 
-Note: On, show, and visible are all considered to be the same thing when entering commands. Likewise, off, hide and hidden are also synonyms.
+Note:
+---
+On, show, and visible are all considered to be the same thing when entering commands. Likewise, off, hide and hidden are also synonyms.

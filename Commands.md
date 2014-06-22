@@ -21,4 +21,4 @@ All those shown above, plus:
 
 Note:
 ---
-On, show, and visible are all considered to be the same thing when entering commands. Likewise, off, hide and hidden are also synonyms.
+"On", "show", and "visible" are all considered to be the same thing when entering commands. Likewise, "off", "hide" and "hidden" are also synonyms.

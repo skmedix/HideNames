@@ -19,11 +19,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
 import com.tlf.HN.commands.CommandName;
-import com.tlf.HN.event.HNEventHandler;
+import com.tlf.HN.event.HNEventHandlerCPW;
+import com.tlf.HN.event.HNEventHandlerForge;
 import com.tlf.HN.network.packet.PacketHNChange;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -73,6 +75,7 @@ public class HideNames
 	
 	public static boolean defaultHiddenStatus;
 	public static boolean saveOfflinePlayers;
+	public static boolean allowCommand;
 	
 	private ModMetadata metadata;
 	
@@ -88,6 +91,7 @@ public class HideNames
 		
 		defaultHiddenStatus = config.get(Configuration.CATEGORY_GENERAL, "defaultHiddenStatus", false, "Default state for new players").getBoolean(false);
 		saveOfflinePlayers = config.get(Configuration.CATEGORY_GENERAL, "saveOfflinePlayers", true, "Whether or not to keep players in 'hidden.txt' if they are offline - useful for big servers").getBoolean(true);		
+		allowCommand = config.get(Configuration.CATEGORY_GENERAL, "allowCommand", true, "Whether or not non-ops can use the /name command").getBoolean(true);
 		serverFilePath = config.get(Configuration.CATEGORY_GENERAL, "serverFilePath", "", "Where the file 'hidden.txt' should be on a dedicated server - NOTE: all directories are located within the server folder").getString();
 		clientFilePath = config.get(Configuration.CATEGORY_GENERAL, "clientFilePath", "/config/tlf", "Where the file 'hidden.txt' should be on a client/LAN server - NOTE: all directories are located within the '.minecraft' folder").getString();
 		
@@ -100,9 +104,8 @@ public class HideNames
 	@EventHandler
 	public void onModInit(FMLInitializationEvent event)
 	{
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		
-		MinecraftForge.EVENT_BUS.register(new HNEventHandler(side == Side.CLIENT));
+		MinecraftForge.EVENT_BUS.register(new HNEventHandlerForge());
+		FMLCommonHandler.instance().bus().register(new HNEventHandlerCPW());
 	}
 	
 	@EventHandler
@@ -256,7 +259,7 @@ public class HideNames
 	 * Sets all players hidden status to the supplied boolean
 	 * @param hidden The state to set all players to
 	 */
-	public void setAll(boolean hidden)
+	public void setAll(String sender, boolean hidden)
 	{
 		List<String> users = new ArrayList<String>();
 		for (Map.Entry<String, Boolean> entry : hiddenPlayers.entrySet())
@@ -267,7 +270,12 @@ public class HideNames
 		
 		for (int i = 0; i < users.size(); i++)
 		{
-			updateHiddenPlayers(users.get(i), hidden);
+			String username = users.get(i);
+			updateHiddenPlayers(username, hidden);
+			
+			if (!username.equalsIgnoreCase(sender)) {
+				playerForName(users.get(i)).addChatMessage(new ChatComponentText(sender+" set your name to be: " + (hiddenPlayers.get(username) ? EnumChatFormatting.GREEN+"Hidden" : EnumChatFormatting.DARK_RED+"Visible")));
+			}
 		}
 	}
 	
@@ -343,5 +351,14 @@ public class HideNames
 		{
 			createFile(fileHiddenPlayers);
 		}
+	}
+	
+	public static EntityPlayerMP playerForName(String username) {
+		return MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(username);
+	}
+	
+	public static String colorBool(boolean bool, boolean capatalize)
+	{
+		return capatalize ? (bool ? EnumChatFormatting.GREEN+"True" : EnumChatFormatting.DARK_RED+"False") : (bool ? EnumChatFormatting.GREEN+"true" : EnumChatFormatting.DARK_RED+"false");
 	}
 }

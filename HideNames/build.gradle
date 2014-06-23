@@ -17,18 +17,12 @@ buildscript {
 
 apply plugin: 'forge'
 
-dependencies {
-   dependencies {
-     compile fileTree(dir: '/Users/simon/Desktop/Minecraft/Modding/MCP/Forge 1.7/Export', include: ['CommandAPI*.jar'])
-   }
-}
-
 version = "1.7.2-1.1.0"
 group = "com.tlf.HN"
 archivesBaseName = "Hide Names"
 
 minecraft {
-    version = "1.7.2-10.12.1.1110"
+    version = "1.7.2-10.12.1.1133"
     assetDir = "eclipse/assets"
 }
 

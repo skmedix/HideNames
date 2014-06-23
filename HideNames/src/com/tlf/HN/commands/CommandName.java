@@ -44,9 +44,9 @@ public class CommandName extends CommandBase
 	{
 		Set ops = MinecraftServer.getServer().getConfigurationManager().getOps();
 		if (ops.contains(par1ICommandSender.getCommandSenderName().toLowerCase()) || (!MinecraftServer.getServer().isDedicatedServer() && Minecraft.getMinecraft().isSingleplayer())) {
-			return "/name(s) <all|set|toggle|on|off|option|status>";
+			return "/name(s) <all|set|toggle|hide|show|option>";
 		} else {
-			return "/name(s) <toggle|on|off|status>";
+			return "/name(s) <toggle|hide|show>";
 		}
 	}
 	
@@ -85,10 +85,6 @@ public class CommandName extends CommandBase
 				
 				HideNames.instance.updateHiddenPlayers(player.getCommandSenderName(), true);
 				player.addChatMessage(new ChatComponentText("Your name is now: "+EnumChatFormatting.GREEN+"Hidden"));
-				
-			} else if ("status".equalsIgnoreCase(par2ArrayOfStr[0])) {
-				
-				player.addChatMessage(new ChatComponentText("Your name is: " + (HideNames.instance.hiddenPlayers.get(player.getCommandSenderName().toLowerCase()) ? EnumChatFormatting.GREEN+"Hidden" : EnumChatFormatting.DARK_RED+"Visible")));
 				
 			} else if ("all".equalsIgnoreCase(par2ArrayOfStr[0])) {
 				
@@ -219,7 +215,7 @@ public class CommandName extends CommandBase
 				throw new WrongUsageException(this.getCommandUsage(par1ICommandSender), new Object[0]);
 			}
 		} else {
-			throw new WrongUsageException(this.getCommandUsage(par1ICommandSender), new Object[0]);
+			player.addChatMessage(new ChatComponentText("Your name is: " + (HideNames.instance.hiddenPlayers.get(player.getCommandSenderName().toLowerCase()) ? EnumChatFormatting.GREEN+"Hidden" : EnumChatFormatting.DARK_RED+"Visible")));
 		}
 	}
 	
@@ -231,7 +227,7 @@ public class CommandName extends CommandBase
 		
 		if (par2ArrayOfStr.length == 1)
 		{
-			return getListOfStringsMatchingLastWord(par2ArrayOfStr, (isOp) ? new String[] { "all", "set", "toggle", "on", "off", "status", "option"} : new String[] {"toggle", "on", "off", "status", "default"});
+			return getListOfStringsMatchingLastWord(par2ArrayOfStr, (isOp) ? new String[] { "all", "set", "toggle", "hide", "show", "status", "option"} : new String[] {"toggle", "hide", "show", "status", "default"});
 		}
 		else if (par2ArrayOfStr.length == 2 && (isOp) && (par2ArrayOfStr[0].equalsIgnoreCase("option") || par2ArrayOfStr[0].equalsIgnoreCase("options")))
 		{

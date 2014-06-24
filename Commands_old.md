@@ -1,7 +1,7 @@
 #Commands
 
 ###Note:
-These commands are for versions /before/ 1.1.0 For the current version, see [here](https://github.com/thislooksfun/HideNames/blob/master/Commands.md).
+These commands are for versions _before_ 1.1.0 For the current version, see [here](https://github.com/thislooksfun/HideNames/blob/master/Commands.md).
 ##Non-op
 * /name status – Show the current state of your name
 * /name toggle – Toggles the state of your name

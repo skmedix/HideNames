@@ -3,7 +3,6 @@
 ###Note:
 These commands are for version 1.1.0+ For previous versions, see [here]().
 ##Non-op
----
 * /name – Show the current state of your name
 * /name toggle – Toggles the state of your name
 * /name hide – Hides your name

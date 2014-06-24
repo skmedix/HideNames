@@ -1,15 +1,15 @@
-Commands
-===
+#Commands
 
-Non-op
+###Note:
+These commands are for version 1.1.0+ For previous versions, see [here](https://github.com/thislooksfun/HideNames/blob/master/Commands_old.md).
+##Non-op
 ---
 * /name – Show the current state of your name
 * /name toggle – Toggles the state of your name
 * /name hide – Hides your name
 * /name show – Shows your name
 
-Op
----
+##Op
 All those shown above, plus:
 * /name all [on/off] – Sets all connected players names to be shown or hidden, respectivly.
 * /name option default [on/off] – Sets the default state for players logging in to this server. ("on" by default)
@@ -19,6 +19,5 @@ All those shown above, plus:
 * /name option allowCommand – Whether or not non-ops can use the /name command at all.
 
 
-Note:
----
+###Note:
 "On", "show", and "visible" are all considered to be the same thing when entering commands. Likewise, "off", "hide" and "hidden" are also synonyms.

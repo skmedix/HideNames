@@ -12,8 +12,6 @@
   "credits": "",
   "parent": "",
   "screenshots": [],
-  "dependencies": [
-    "commandapi"
-  ]
+  "dependencies": []
 }
 ]

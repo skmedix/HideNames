@@ -1,0 +1,4 @@
+1.1.4:
+	* Updated version because build 1.1.3 got rejected
+1.1.3:
+	* Added support for my new API: Forge Updater

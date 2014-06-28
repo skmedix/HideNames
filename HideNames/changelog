@@ -1,4 +1,11 @@
 1.1.4:
-	* Updated version because build 1.1.3 got rejected
+* Updated version because build 1.1.3 got rejected
+
 1.1.3:
-	* Added support for my new API: Forge Updater
+* Added support for my new API: Forge Updater
+
+1.1.0:
+* Ported to 1.7, and changed how commands work for admins. See here for the new list of commands
+
+1.0:
+* Initial release

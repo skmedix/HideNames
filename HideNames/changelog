@@ -1,7 +1,10 @@
 Hide Names changelog:
 
+1.1.5:
+* Updated version again because build 1.1.4 also got rejected due to a duplicate filename
+
 1.1.4:
-* Updated version because build 1.1.3 got rejected
+* Updated version because build 1.1.3 got rejected due to a duplicate filename
 
 1.1.3:
 * Added support for my new API: Forge Updater

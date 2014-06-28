@@ -33,6 +33,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -46,7 +47,7 @@ public class HideNames
 {	
 	public static final String MODID = "hidenames";
 	public static final String NAME = "Hide Names";
-	public static final String VERSION = "1.1.1";
+	public static final String VERSION = "1.1.3";
 	
 	/** The public instance */
 	@Instance(HideNames.MODID)
@@ -361,4 +362,11 @@ public class HideNames
 	{
 		return capatalize ? (bool ? EnumChatFormatting.GREEN+"True" : EnumChatFormatting.DARK_RED+"False") : (bool ? EnumChatFormatting.GREEN+"true" : EnumChatFormatting.DARK_RED+"false");
 	}
+	
+	@Optional.Method(modid = "forgeupdater")
+	public String curseID() { return "hide-names"; /** CurseID. Get it from curse.com/mc-mods/minecraft/[curseID]*/ }
+	@Optional.Method(modid = "forgeupdater")
+	public String[] fileFormats() { return new String[]{"Hide_Names-$mc-$v.jar", "HideNames_v$v_MC_$mc.jar"}; /** $mc = minecraft version; $v = mod version */ }
+	@Optional.Method(modid = "forgeupdater")
+	public int minType() { return 2; /** 0 = alpha; 1 = beta; 2 = release */ }
 }

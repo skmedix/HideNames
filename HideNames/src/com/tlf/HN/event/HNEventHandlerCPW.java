@@ -30,16 +30,6 @@ public class HNEventHandlerCPW
 		if (!client) {
 			HideNames.instance.onClientConnect(event.player);
 		}
-		
-		/*
-		UpdateCheckerNoJSON checker = HideNames.instance.checker;
-		if (checker.hasUpdate() && !client && (MinecraftServer.getServer().isSinglePlayer() || MinecraftServer.getServer().getConfigurationManager().getOps().contains(event.player.getCommandSenderName().toLowerCase())))
-		{
-			System.out.println("==== Update!");
-			event.player.addChatMessage(new ChatComponentText("Version "+checker.updateVersion()+" of "+HideNames.NAME+" available! (You are "+checker.versionsBehind()+" versions behind)"));
-			event.player.addChatMessage(new ChatComponentText(checker.updateURL()));
-		}
-		*/
 	}
 	
 	@SubscribeEvent

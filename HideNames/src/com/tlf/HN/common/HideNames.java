@@ -355,7 +355,7 @@ public class HideNames
 	}
 	
 	public static EntityPlayerMP playerForName(String username) {
-		return MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(username);
+		return MinecraftServer.getServer().getConfigurationManager().func_152612_a(username);
 	}
 	
 	public static String colorBool(boolean bool, boolean capatalize)

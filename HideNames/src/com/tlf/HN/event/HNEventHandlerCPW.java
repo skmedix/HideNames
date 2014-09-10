@@ -53,7 +53,7 @@ public class HNEventHandlerCPW
 		for (int i = 0; i < users.length; i++) {
 			if (!HideNames.instance.hiddenPlayers.containsKey(users[i].toLowerCase()) || HideNames.instance.hiddenPlayers.get(users[i].toLowerCase()) == null)
 			{
-				EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(users[i]);
+				EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().func_152612_a(users[i]);
 				HideNames.instance.updateHiddenPlayers(users[i], HideNames.instance.defaultHiddenStatus);
 				player.addChatMessage(new ChatComponentText("Your name is: " + (HideNames.instance.defaultHiddenStatus ? "\u00a7aHidden" : "\u00a74Visible")));
 			}

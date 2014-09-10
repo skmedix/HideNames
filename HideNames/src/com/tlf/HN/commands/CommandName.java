@@ -1,7 +1,5 @@
 package com.tlf.HN.commands;
 
-import com.tlf.HN.common.HideNames;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -13,7 +11,9 @@ import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+
+import com.tlf.HN.common.HideNames;
+import com.tlf.HN.common.TLFUtils;
 
 public class CommandName extends CommandBase
 {	
@@ -42,8 +42,7 @@ public class CommandName extends CommandBase
 	@Override
 	public String getCommandUsage(ICommandSender par1ICommandSender)
 	{
-		Set ops = MinecraftServer.getServer().getConfigurationManager().getOps();
-		if (ops.contains(par1ICommandSender.getCommandSenderName().toLowerCase()) || (!MinecraftServer.getServer().isDedicatedServer() && Minecraft.getMinecraft().isSingleplayer())) {
+		if (TLFUtils.isPlayerOp(par1ICommandSender.getCommandSenderName()) || (!MinecraftServer.getServer().isDedicatedServer() && Minecraft.getMinecraft().isSingleplayer())) {
 			return "/name(s) <all|set|toggle|hide|show|option>";
 		} else {
 			return "/name(s) <toggle|hide|show>";
@@ -52,7 +51,7 @@ public class CommandName extends CommandBase
 	
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
-		return MinecraftServer.getServer().getConfigurationManager().getOps().contains(sender.getCommandSenderName().toLowerCase()) ? true : HideNames.allowCommand;
+		return TLFUtils.isPlayerOp(sender.getCommandSenderName().toLowerCase()) ? true : HideNames.allowCommand;
 	}
 	
 	@Override
@@ -60,13 +59,12 @@ public class CommandName extends CommandBase
 	{
 		
 		EntityPlayerMP player = getCommandSenderAsPlayer(par1ICommandSender);
-		Set ops = MinecraftServer.getServer().getConfigurationManager().getOps();
 		boolean isOp = false;
 		
 		if (!MinecraftServer.getServer().isDedicatedServer()) {
-			isOp = ops.contains(player.getCommandSenderName().toLowerCase()) || MinecraftServer.getServer().getServerOwner().equalsIgnoreCase(player.getCommandSenderName());
+			isOp = TLFUtils.isPlayerOp(player.getCommandSenderName()) || MinecraftServer.getServer().getServerOwner().equalsIgnoreCase(player.getCommandSenderName());
 		} else {
-			isOp = ops.contains(player.getCommandSenderName().toLowerCase());
+			isOp = TLFUtils.isPlayerOp(player.getCommandSenderName());
 		}
 		
 		if (par2ArrayOfStr.length > 0) {
@@ -187,7 +185,7 @@ public class CommandName extends CommandBase
 				
 				if (isOp) {
 					if (par2ArrayOfStr.length == 3) {
-						EntityPlayerMP targetPlayer = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(par2ArrayOfStr[1]);
+						EntityPlayerMP targetPlayer = MinecraftServer.getServer().getConfigurationManager().func_152612_a(par2ArrayOfStr[1]);
 						if ("on".equalsIgnoreCase(par2ArrayOfStr[2]) || "show".equalsIgnoreCase(par2ArrayOfStr[2]) || "visible".equalsIgnoreCase(par2ArrayOfStr[2]))
 						{
 							HideNames.instance.updateHiddenPlayers(targetPlayer.getCommandSenderName(), false);
@@ -222,8 +220,7 @@ public class CommandName extends CommandBase
 	@Override
 	public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] par2ArrayOfStr)
 	{	
-		Set ops = MinecraftServer.getServer().getConfigurationManager().getOps();
-		boolean isOp = ops.contains(par1ICommandSender.getCommandSenderName().toLowerCase()) || (!MinecraftServer.getServer().isDedicatedServer() && Minecraft.getMinecraft().isSingleplayer());
+		boolean isOp = TLFUtils.isPlayerOp(par1ICommandSender.getCommandSenderName()) || (!MinecraftServer.getServer().isDedicatedServer() && Minecraft.getMinecraft().isSingleplayer());
 		
 		if (par2ArrayOfStr.length == 1)
 		{

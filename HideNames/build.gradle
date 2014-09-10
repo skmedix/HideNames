@@ -17,12 +17,12 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.7.2-1.1.7"
+version = "1.7.2-1.1.8"
 group = "com.tlf.HN"
 archivesBaseName = "Hide Names"
 
 minecraft {
-    version = "1.7.2-10.12.2.1133"
+    version = "1.7.10-10.13.0.1180"
     assetDir = "eclipse/assets"
 }
 

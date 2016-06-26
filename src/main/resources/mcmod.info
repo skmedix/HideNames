@@ -1,6 +1,6 @@
 [
 {
-  "modid": "HideNames",
+  "modid": "hidenames",
   "name": "HideNames",
   "description": "Adds commands to hide and show the name that displays above your head.",
   "version": "${version}",

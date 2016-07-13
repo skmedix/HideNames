@@ -1,10 +1,9 @@
 HideNames
 =========
 **This mod was originally maintained by [@thislooksfun](https://github.com/thislooksfun), huge thanks to all his work.**
-Original Curse site: [here](http://minecraft.curseforge.com/mc-mods/62786-hide-names).
 
 * [Commands](https://github.com/skmedix/HideNames/wiki/Commands)
-* [CurseForge - Soon](#)
+* [**CurseForge**](http://minecraft.curseforge.com/mc-mods/62786-hide-names)
 
 Changelog
 =========

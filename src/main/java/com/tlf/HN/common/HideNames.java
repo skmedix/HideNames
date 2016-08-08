@@ -195,10 +195,8 @@ public class HideNames {
 	 * @param player
 	 */
 	public void onClientConnect(EntityPlayer player) {
-		Iterator<String> iterator = hiddenPlayers.keySet().iterator();
-		while (iterator.hasNext()) {
-			String user = iterator.next();
-			this.network.sendTo(new PacketHNChange(user, hiddenPlayers.get(user)), (EntityPlayerMP)player);
+		for (String user : hiddenPlayers.keySet()) {
+			this.network.sendTo(new PacketHNChange(user, hiddenPlayers.get(user)), (EntityPlayerMP) player);
 		}
 
 		String username = player.getCommandSenderEntity().getName().toLowerCase();

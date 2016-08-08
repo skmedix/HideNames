@@ -23,10 +23,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -198,13 +195,11 @@ public class HideNames {
 	 * @param player
 	 */
 	public void onClientConnect(EntityPlayer player) {
-		/* Very annoying spam in the console
 		Iterator<String> iterator = hiddenPlayers.keySet().iterator();
 		while (iterator.hasNext()) {
 			String user = iterator.next();
 			this.network.sendTo(new PacketHNChange(user, hiddenPlayers.get(user)), (EntityPlayerMP)player);
-			System.out.println("Send data to " + player.getCommandSenderEntity());
-		} */
+		}
 
 		String username = player.getCommandSenderEntity().getName().toLowerCase();
 

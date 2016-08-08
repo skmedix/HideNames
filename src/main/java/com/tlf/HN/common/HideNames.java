@@ -1,30 +1,15 @@
 package com.tlf.HN.common;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.tlf.HN.commands.CommandName;
+import com.tlf.HN.event.HNEventHandlerCPW;
+import com.tlf.HN.event.HNEventHandlerForge;
+import com.tlf.HN.network.packet.PacketHNChange;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-
-import com.tlf.HN.commands.CommandName;
-import com.tlf.HN.event.HNEventHandlerCPW;
-import com.tlf.HN.event.HNEventHandlerForge;
-import com.tlf.HN.network.packet.PacketHNChange;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
@@ -37,24 +22,40 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION)
 public class HideNames {
 	public static final String MODID = "hidenames";
 	public static final String NAME = "HideNames";
 	public static final String VERSION = "1.2";
 
-	/** The public instance */
+	/**
+	 * The public instance
+	 */
 	@Mod.Instance(HideNames.MODID)
 	public static HideNames instance;
 
-	/** The {@link Configuration} for Hide Names */
+	/**
+	 * The {@link Configuration} for Hide Names
+	 */
 	public Configuration config;
 
-	/** The channel that Hide Names uses for custom packets */
+	/**
+	 * The channel that Hide Names uses for custom packets
+	 */
 	public String channel;
 	public SimpleNetworkWrapper network;
 
-	/** All players currently in the file {@link #fileHiddenPlayers hidden.txt} */
+	/**
+	 * All players currently in the file {@link #fileHiddenPlayers hidden.txt}
+	 */
 	public final Map<String, Boolean> hiddenPlayers = new HashMap<String, Boolean>();
 	public final Logger logger = Logger.getLogger("Minecraft");
 
@@ -62,7 +63,9 @@ public class HideNames {
 	public static final String commandName1 = "name";
 	public static final String commandName2 = "names";
 
-	/** The path to the file hidden.txt */
+	/**
+	 * The path to the file hidden.txt
+	 */
 	public String fileHiddenPlayers;
 	public final String fileName = "hidden.txt";
 	public String serverFilePath;
@@ -191,6 +194,7 @@ public class HideNames {
 	 * Called every time a user connects. If that user is not in {@link #fileHiddenPlayers hidden.txt}, then they are placed in {@link #fileHiddenPlayers hidden.txt} with the hidden status of whatever
 	 * {@link #defaultHiddenStatus defaultHiddenStatus} is set to. If they are in {@link #fileHiddenPlayers hidden.txt}, then their hidden status is whatever is
 	 * said in {@link #fileHiddenPlayers hidden.txt}
+	 *
 	 * @param player
 	 */
 	public void onClientConnect(EntityPlayer player) {
@@ -215,6 +219,7 @@ public class HideNames {
 
 	/**
 	 * Creates a file at the location 'file'
+	 *
 	 * @param file The location to create the file
 	 */
 	public void createFile(String file) {
@@ -228,15 +233,14 @@ public class HideNames {
 				out.write("\n" + mEntry.getKey() + ":" + ((Boolean) mEntry.getValue() ? "true" : "false"));
 			}
 			out.close();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			logger.log(Level.WARNING, "Error: " + e.getMessage());
 		}
 	}
 
 	/**
 	 * Sets all players hidden status to the supplied boolean
+	 *
 	 * @param hidden The state to set all players to
 	 */
 	public void setAll(String sender, boolean hidden) {
@@ -258,19 +262,20 @@ public class HideNames {
 
 	/**
 	 * Changes the state of the player 'username' to the state 'hidden'
+	 *
 	 * @param username The player to change
-	 * @param hidden The state to change them to
+	 * @param hidden   The state to change them to
 	 */
 	public void updateHiddenPlayers(String username, boolean hidden) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		
+
 		if (side == Side.SERVER) {
 			username = username.toLowerCase();
-			
+
 			hiddenPlayers.remove(username);
 			hiddenPlayers.put(username, hidden);
 			refreshFile(fileHiddenPlayers);
-			
+
 			this.network.sendToAll(new PacketHNChange(username, hidden));
 		}
 	}
@@ -298,8 +303,7 @@ public class HideNames {
 		}
 
 		for (int i = 0; i < keepUsers.length; i++) {
-			if (!keepUsers[i])
-			{
+			if (!keepUsers[i]) {
 				hiddenPlayers.remove(keySet[i]);
 			}
 		}
@@ -331,9 +335,14 @@ public class HideNames {
 	}
 
 	@Optional.Method(modid = "forgeupdater")
-	public String curseID() { return "hide-names"; /** CurseID. Get it from curse.com/mc-mods/minecraft/[curseID]*/ }
+	public String curseID() {
+		return "hide-names"; /** CurseID. Get it from curse.com/mc-mods/minecraft/[curseID]*/}
+
 	@Optional.Method(modid = "forgeupdater")
-	public String[] fileFormats() { return new String[]{"Hide_Names-$mc-$v.jar", "HideNames_v$v_MC_$mc.jar"}; /** $mc = minecraft version; $v = mod version */ }
+	public String[] fileFormats() {
+		return new String[]{ "Hide_Names-$mc-$v.jar", "HideNames_v$v_MC_$mc.jar" }; /** $mc = minecraft version; $v = mod version */}
+
 	@Optional.Method(modid = "forgeupdater")
-	public int minType() { return 2; /** 0 = alpha; 1 = beta; 2 = release */ }
+	public int minType() {
+		return 2; /** 0 = alpha; 1 = beta; 2 = release */}
 }

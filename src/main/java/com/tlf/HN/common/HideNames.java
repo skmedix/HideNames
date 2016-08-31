@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION)
+@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION, updateJSON = "http://s1.skmedix.pl/mods/hidenames.json")
 public class HideNames {
 	public static final String MODID = "hidenames";
 	public static final String NAME = "HideNames";

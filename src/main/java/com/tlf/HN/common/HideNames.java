@@ -326,16 +326,4 @@ public class HideNames {
 	public static String colorBool(boolean bool, boolean capatalize) {
 		return (bool ? TextFormatting.GREEN + "true" : TextFormatting.DARK_RED + "false");
 	}
-
-	@Optional.Method(modid = "forgeupdater")
-	public String curseID() {
-		return "hide-names"; /** CurseID. Get it from curse.com/mc-mods/minecraft/[curseID]*/}
-
-	@Optional.Method(modid = "forgeupdater")
-	public String[] fileFormats() {
-		return new String[]{ "Hide_Names-$mc-$v.jar", "HideNames_v$v_MC_$mc.jar" }; /** $mc = minecraft version; $v = mod version */}
-
-	@Optional.Method(modid = "forgeupdater")
-	public int minType() {
-		return 2; /** 0 = alpha; 1 = beta; 2 = release */}
 }

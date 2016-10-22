@@ -2,7 +2,6 @@ package com.tlf.HN.commands;
 
 import com.tlf.HN.common.HideNames;
 import com.tlf.HN.common.TLFUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -16,7 +15,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class CommandName extends CommandBase {
 	@Override
@@ -65,8 +63,6 @@ public class CommandName extends CommandBase {
 		}
 
 		if (args.length > 0) {
-			
-
 			if ("toggle".equalsIgnoreCase(args[0])) {
 
 				HideNames.instance.updateHiddenPlayers(player.getCommandSenderEntity().getName().toLowerCase(), !HideNames.instance.hiddenPlayers.get(player.getCommandSenderEntity().getName().toLowerCase()));

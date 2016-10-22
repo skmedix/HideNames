@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CommandName extends CommandBase {
 	@Override
@@ -37,7 +38,8 @@ public class CommandName extends CommandBase {
 	}
 
 	public String getCommandUsage(ICommandSender sender) {
-		if (TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName()) || (!FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isDedicatedServer() && Minecraft.getMinecraft().isSingleplayer())) {
+		if (TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName()) ||
+				(!FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isDedicatedServer() && FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isSinglePlayer())) {
 			return "/name(s) <all|set|toggle|hide|show|option>";
 		} else {
 			return "/name(s) <toggle|hide|show>";
@@ -49,11 +51,12 @@ public class CommandName extends CommandBase {
 		return TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName().toLowerCase()) || HideNames.allowCommand;
 	}
 
+	// TODO: Rewrite
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		boolean isOp = false;
+		boolean isOp = TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName());
 
 		if (!FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isDedicatedServer()) {
 			isOp = TLFUtils.isPlayerOp(player.getCommandSenderEntity().getName()) || FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner().equalsIgnoreCase(player.getCommandSenderEntity().getName());
@@ -62,6 +65,8 @@ public class CommandName extends CommandBase {
 		}
 
 		if (args.length > 0) {
+			
+
 			if ("toggle".equalsIgnoreCase(args[0])) {
 
 				HideNames.instance.updateHiddenPlayers(player.getCommandSenderEntity().getName().toLowerCase(), !HideNames.instance.hiddenPlayers.get(player.getCommandSenderEntity().getName().toLowerCase()));
@@ -144,7 +149,7 @@ public class CommandName extends CommandBase {
 									throw new WrongUsageException("/name(s) option saveOfflinePlayers [true|false]");
 								}
 							} else {
-								player.addChatMessage(new TextComponentString("SaveOfflinePlayers: " + HideNames.colorBool(HideNames.saveOfflinePlayers, false)));
+								player.addChatMessage(new TextComponentString("SaveOfflinePlayers: " + HideNames.colorBool(HideNames.saveOfflinePlayers)));
 							}
 						} else if ("allowCommand".equalsIgnoreCase(args[1])) {
 
@@ -159,7 +164,7 @@ public class CommandName extends CommandBase {
 									throw new WrongUsageException("/name(s) option allowCommand [true|false]");
 								}
 							} else {
-								player.addChatMessage(new TextComponentString("allowCommand: " + HideNames.colorBool(HideNames.allowCommand, false)));
+								player.addChatMessage(new TextComponentString("allowCommand: " + HideNames.colorBool(HideNames.allowCommand)));
 							}
 						} else {
 							throw new WrongUsageException("/name(s) option <default|clear|clearOffline|saveOfflinePlayers|allowCommand>");
@@ -201,7 +206,8 @@ public class CommandName extends CommandBase {
 
 	@Override
 	public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos bpos) {
-		boolean isOp = TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName()) || (!FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isDedicatedServer() && Minecraft.getMinecraft().isSingleplayer());
+		boolean isOp = TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName()) ||
+				(!FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isDedicatedServer() && FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isSinglePlayer());
 
 		if (args.length == 1) {
 			return getListOfStringsMatchingLastWord(args, (isOp) ? new String[]{ "all", "set", "toggle", "hide", "show", "status", "option" } : new String[]{ "toggle", "hide", "show", "status", "default" });
@@ -218,7 +224,7 @@ public class CommandName extends CommandBase {
 				String senderName = sender.getCommandSenderEntity().getName();
 				int pos = 0;
 				for (String user : users) {
-					if (user != senderName) {
+					if (!user.equals(senderName)) {
 						nonSenderUsers[pos] = user;
 						pos++;
 					}

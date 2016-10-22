@@ -13,7 +13,6 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -323,7 +322,7 @@ public class HideNames {
 		return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(username);
 	}
 
-	public static String colorBool(boolean bool, boolean capatalize) {
+	public static String colorBool(boolean bool) {
 		return (bool ? TextFormatting.GREEN + "true" : TextFormatting.DARK_RED + "false");
 	}
 }

@@ -9,9 +9,7 @@ public class TLFUtils {
 
 	public static boolean isStringInArray(String[] arr, String match, boolean ignoreCase) {
 		for (String str : arr) {
-			if (ignoreCase && str.equalsIgnoreCase(match)) {
-				return true;
-			} else if (str.equals(match)) {
+			if ((ignoreCase && str.equalsIgnoreCase(match)) || str.equals(match)) {
 				return true;
 			}
 		}

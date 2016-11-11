@@ -1,6 +1,11 @@
+sudo: required
+dist: trusty
+
 language: java
+
 jdk:
+  - openjdk8
   - oraclejdk8
-sudo: true
-install: chmod +x ./gradlew
-script: ./gradlew setupDecompWorkspace build
+
+install: ./gradlew setupDecompWorkspace
+script: ./gradlew build

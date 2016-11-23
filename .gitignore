@@ -26,3 +26,4 @@ proguard/
 .gradle/
 build/
 bin/
+run/

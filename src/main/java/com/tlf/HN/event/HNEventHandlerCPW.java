@@ -40,12 +40,16 @@ public class HNEventHandlerCPW {
 
 		HideNames.instance.checkFile();
 
-		String[] users = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getAllUsernames();
+		String[] users = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOnlinePlayerNames();
 		for (String user : users) {
-			if (!HideNames.instance.hiddenPlayers.containsKey(user.toLowerCase()) || HideNames.instance.hiddenPlayers.get(user.toLowerCase()) == null) {
-				EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance().getServer().getPlayerList().getPlayerByUsername(user);
+			if (!HideNames.instance.hiddenPlayers.containsKey(user.toLowerCase())
+					|| HideNames.instance.hiddenPlayers.get(user.toLowerCase()) == null) {
+
+				EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance()
+						.getServer().getPlayerList().getPlayerByUsername(user);
 				HideNames.instance.updateHiddenPlayers(user, HideNames.defaultHiddenStatus);
-				player.addChatMessage(new TextComponentString("Your name is: " + (HideNames.defaultHiddenStatus ? "\u00a7aHidden" : "\u00a74Visible")));
+				player.sendMessage(new TextComponentString(
+						"Your name is: " + (HideNames.defaultHiddenStatus ? "\u00a7a Hidden" : "\u00a74 Visible")));
 			}
 		}
 
@@ -53,12 +57,17 @@ public class HNEventHandlerCPW {
 			tickCount = 0;
 
 			Configuration tempConfig = HideNames.instance.config;
-
 			tempConfig.load();
 
 			if (HideNames.defaultHiddenStatus != tempConfig.get(Configuration.CATEGORY_GENERAL, "defaultHiddenStatus", false, "Default state for new players").getBoolean(false)) {
 				Property temp = tempConfig.get(Configuration.CATEGORY_GENERAL, "defaultHiddenStatus", false, "Default state for new players");
 				temp.set(HideNames.defaultHiddenStatus);
+			}
+
+			if (HideNames.showHiddenMessage != tempConfig.get(Configuration.CATEGORY_GENERAL, "showHiddenMessage",
+					true, "").getBoolean(true)) {
+				Property temp = tempConfig.get(Configuration.CATEGORY_GENERAL, "showHiddenMessage", true, "");
+				temp.set(HideNames.showHiddenMessage);
 			}
 
 			if (HideNames.saveOfflinePlayers != tempConfig.get(Configuration.CATEGORY_GENERAL, "saveOfflinePlayers", true, "Whether or not to keep players in 'hidden.txt' if they are offline - useful for big servers").getBoolean(true)) {

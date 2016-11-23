@@ -29,11 +29,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION, updateJSON = "http://s1.skmedix.pl/mods/hidenames.json")
+@Mod(modid = HideNames.MODID, name = HideNames.NAME,
+		version = HideNames.VERSION, updateJSON = "http://s1.skmedix.pl/mods/hidenames.json")
 public class HideNames {
 	public static final String MODID = "hidenames";
 	public static final String NAME = "HideNames";
-	public static final String VERSION = "1.2";
+	public static final String VERSION = "1.3";
 
 	/**
 	 * The public instance
@@ -55,7 +56,7 @@ public class HideNames {
 	/**
 	 * All players currently in the file {@link #fileHiddenPlayers hidden.txt}
 	 */
-	public final Map<String, Boolean> hiddenPlayers = new HashMap<String, Boolean>();
+	public final Map<String, Boolean> hiddenPlayers = new HashMap<>();
 	public final Logger logger = Logger.getLogger("Minecraft");
 
 	public static final int commandPermissionLevel = 0;
@@ -73,6 +74,7 @@ public class HideNames {
 	public static boolean defaultHiddenStatus;
 	public static boolean saveOfflinePlayers;
 	public static boolean allowCommand;
+	public static boolean showHiddenMessage;
 
 	private ModMetadata metadata;
 
@@ -85,12 +87,19 @@ public class HideNames {
 
 		config.load();
 
-		defaultHiddenStatus = config.get(Configuration.CATEGORY_GENERAL, "defaultHiddenStatus", false, "Default state for new players").getBoolean(false);
-		saveOfflinePlayers = config.get(Configuration.CATEGORY_GENERAL, "saveOfflinePlayers", true, "Whether or not to keep players in 'hidden.txt' if they are offline - useful for big servers").getBoolean(true);
-		allowCommand = config.get(Configuration.CATEGORY_GENERAL, "allowCommand", true, "Whether or not non-ops can use the /name command").getBoolean(true);
-		serverFilePath = config.get(Configuration.CATEGORY_GENERAL, "serverFilePath", "", "Where the file 'hidden.txt' should be on a dedicated server - NOTE: all directories are located within the server folder").getString();
-		clientFilePath = config.get(Configuration.CATEGORY_GENERAL, "clientFilePath", "/config/tlf", "Where the file 'hidden.txt' should be on a client/LAN server - NOTE: all directories are located within the '.minecraft' folder").getString();
-
+		defaultHiddenStatus = config.get(Configuration.CATEGORY_GENERAL, "defaultHiddenStatus",
+				false, "Default state for new players").getBoolean(false);
+		showHiddenMessage = config.get(Configuration.CATEGORY_GENERAL, "showHiddenMessage",
+				true, "").getBoolean(true);
+		saveOfflinePlayers = config.get(Configuration.CATEGORY_GENERAL, "saveOfflinePlayers",
+				true, "Whether or not to keep players in 'hidden.txt' if they are offline - useful for big servers").getBoolean(true);
+		allowCommand = config.get(Configuration.CATEGORY_GENERAL, "allowCommand",
+				true,
+				"Whether or not non-ops can use the /name command").getBoolean(true);
+		serverFilePath = config.get(Configuration.CATEGORY_GENERAL, "serverFilePath",
+				"", "Where the file 'hidden.txt' should be on a dedicated server - NOTE: all directories are located within the server folder").getString();
+		clientFilePath = config.get(Configuration.CATEGORY_GENERAL, "clientFilePath",
+				"/config/tlf", "Where the file 'hidden.txt' should be on a client/LAN server - NOTE: all directories are located within the '.minecraft' folder").getString();
 		config.save();
 
 		this.network = NetworkRegistry.INSTANCE.newSimpleChannel(this.channel);
@@ -209,7 +218,10 @@ public class HideNames {
 			updateHiddenPlayers(username, hiddenPlayers.get(username));
 		}
 
-		player.addChatMessage(new TextComponentString("Your name is: " + (hiddenPlayers.get(username) ? "\u00a7aHidden" : "\u00a74Visible")));
+		if (HideNames.showHiddenMessage) {
+			player.sendMessage(new TextComponentString("Your name is: " +
+					(hiddenPlayers.get(username) ? "\u00a7aHidden" : "\u00a74Visible")));
+		}
 	}
 
 	/**
@@ -249,8 +261,7 @@ public class HideNames {
 			updateHiddenPlayers(username, hidden);
 
 			if (!username.equalsIgnoreCase(sender)) {
-				HideNames.playerForName(username)
-						.addChatMessage(new TextComponentString(sender + " set your name to be: " + (hiddenPlayers.get(username) ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
+				HideNames.playerForName(username).sendMessage(new TextComponentString(sender + " set your name to be: " + (hiddenPlayers.get(username) ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
 			}
 		}
 	}
@@ -276,7 +287,7 @@ public class HideNames {
 	}
 
 	public void removeOfflinePlayers() {
-		String[] users = FMLCommonHandler.instance().getMinecraftServerInstance().getServer().getAllUsernames();
+		String[] users = FMLCommonHandler.instance().getMinecraftServerInstance().getServer().getOnlinePlayerNames();
 		Object[] keySet = hiddenPlayers.keySet().toArray();
 		Boolean[] keepUsers = new Boolean[keySet.length];
 		Boolean foundUser = false;

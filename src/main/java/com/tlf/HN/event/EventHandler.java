@@ -14,11 +14,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class HNEventHandlerCPW {
+public class EventHandler {
 	private final boolean client;
 	private int tickCount = 0;
 
-	public HNEventHandlerCPW() {
+	public EventHandler() {
 		this.client = FMLCommonHandler.instance().getEffectiveSide().isClient();
 		System.out.println("HN Event Handler started on side " + FMLCommonHandler.instance().getEffectiveSide());
 	}

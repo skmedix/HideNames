@@ -1,8 +1,7 @@
 package com.tlf.HN.common;
 
 import com.tlf.HN.commands.CommandName;
-import com.tlf.HN.event.HNEventHandlerCPW;
-import com.tlf.HN.event.HNEventHandlerForge;
+import com.tlf.HN.event.EventHandler;
 import com.tlf.HN.network.packet.PacketHNChange;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -108,8 +107,7 @@ public class HideNames {
 
 	@Mod.EventHandler
 	public void onModInit(FMLInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new HNEventHandlerForge());
-		MinecraftForge.EVENT_BUS.register(new HNEventHandlerCPW());
+		MinecraftForge.EVENT_BUS.register(new EventHandler());
 	}
 
 	@Mod.EventHandler

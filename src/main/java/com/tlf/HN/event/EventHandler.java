@@ -1,14 +1,18 @@
 package com.tlf.HN.event;
 
 import com.tlf.HN.common.HideNames;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class HNEventHandlerCPW {
 	private final boolean client;
@@ -17,6 +21,19 @@ public class HNEventHandlerCPW {
 	public HNEventHandlerCPW() {
 		this.client = FMLCommonHandler.instance().getEffectiveSide().isClient();
 		System.out.println("HN Event Handler started on side " + FMLCommonHandler.instance().getEffectiveSide());
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void onRenderLiving(RenderLivingEvent.Specials.Pre event) {
+		if (event.getEntity() instanceof EntityPlayer) {
+			if (event.isCancelable()) {
+				Object hidden = HideNames.instance.hiddenPlayers.get(event.getEntity().getCommandSenderEntity().getName().toLowerCase());
+				if (hidden != null && (Boolean) hidden) {
+					event.setCanceled(true);
+				}
+			}
+		}
 	}
 
 	@SubscribeEvent

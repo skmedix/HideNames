@@ -14,6 +14,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class CommandName extends CommandBase {
 
 	@Override
 	public List getAliases() {
-		List list = new ArrayList();
+		List list = new ArrayList<>();
 		list.add(HideNames.commandName1);
 		list.add(HideNames.commandName2);
 		return list;
@@ -67,18 +68,18 @@ public class CommandName extends CommandBase {
 		if (args.length > 0) {
 			if ("toggle".equalsIgnoreCase(args[0])) {
 
-				HideNames.instance.updateHiddenPlayers(player.getCommandSenderEntity().getName().toLowerCase(), !HideNames.instance.hiddenPlayers.get(player.getCommandSenderEntity().getName().toLowerCase()));
+				HideNames.INSTANCE.updateHiddenPlayers(player.getCommandSenderEntity().getName().toLowerCase(), !HideNames.INSTANCE.hiddenPlayers.get(player.getCommandSenderEntity().getName().toLowerCase()));
 
-				player.sendMessage(new TextComponentString("Your name is now: " + (HideNames.instance.hiddenPlayers.get(player.getCommandSenderEntity().getName().toLowerCase()) ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
+				player.sendMessage(new TextComponentString("Your name is now: " + (HideNames.INSTANCE.hiddenPlayers.get(player.getCommandSenderEntity().getName().toLowerCase()) ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
 
 			} else if ("on".equalsIgnoreCase(args[0]) || "show".equalsIgnoreCase(args[0]) || "visible".equalsIgnoreCase(args[0])) {
 
-				HideNames.instance.updateHiddenPlayers(player.getCommandSenderEntity().getName(), false);
+				HideNames.INSTANCE.updateHiddenPlayers(player.getCommandSenderEntity().getName(), false);
 				player.sendMessage(new TextComponentString("Your name is now: " + TextFormatting.DARK_RED + "Visible"));
 
 			} else if ("off".equalsIgnoreCase(args[0]) || "hide".equalsIgnoreCase(args[0]) || "hidden".equalsIgnoreCase(args[0])) {
 
-				HideNames.instance.updateHiddenPlayers(player.getCommandSenderEntity().getName(), true);
+				HideNames.INSTANCE.updateHiddenPlayers(player.getCommandSenderEntity().getName(), true);
 				player.sendMessage(new TextComponentString("Your name is now: " + TextFormatting.GREEN + "Hidden"));
 
 			} else if ("all".equalsIgnoreCase(args[0])) {
@@ -88,12 +89,12 @@ public class CommandName extends CommandBase {
 						if ("on".equalsIgnoreCase(args[1]) || "show".equalsIgnoreCase(args[1])) {
 
 							player.sendMessage(new TextComponentString("All names are now: " + TextFormatting.DARK_RED + "Visible"));
-							HideNames.instance.setAll(sender.getCommandSenderEntity().getName(), false);
+							HideNames.INSTANCE.setAll(sender.getCommandSenderEntity().getName(), false);
 
 						} else if ("off".equalsIgnoreCase(args[1]) || "hide".equalsIgnoreCase(args[1])) {
 
 							player.sendMessage(new TextComponentString("All names are now: " + TextFormatting.GREEN + "Hidden"));
-							HideNames.instance.setAll(sender.getCommandSenderEntity().getName(), true);
+							HideNames.INSTANCE.setAll(sender.getCommandSenderEntity().getName(), true);
 
 						} else {
 							throw new WrongUsageException("/name all <on|off>");
@@ -124,19 +125,19 @@ public class CommandName extends CommandBase {
 							}
 						} else if ("showMessage".equalsIgnoreCase(args[1])) {
 							if ("on".equalsIgnoreCase(args[2])) {
-								HideNames.showHiddenMessage = true;
+								HideNames.showHideStatusOnJoin = true;
 							} else if ("off".equalsIgnoreCase(args[2])) {
-								HideNames.showHiddenMessage = false;
+								HideNames.showHideStatusOnJoin = false;
 							} else {
-								player.sendMessage(new TextComponentString("Showing HN messages is: " + (HideNames.showHiddenMessage ? TextFormatting.GREEN + "Enabled" : TextFormatting.DARK_RED + "Disabled")));
+								player.sendMessage(new TextComponentString("Showing HN messages is: " + (HideNames.showHideStatusOnJoin ? TextFormatting.GREEN + "Enabled" : TextFormatting.DARK_RED + "Disabled")));
 							}
 						} else if ("clear".equalsIgnoreCase(args[1])) {
-							HideNames.instance.clearHiddenPlayers();
+							HideNames.INSTANCE.clearHiddenPlayers();
 							player.sendMessage(new TextComponentString("All hidden players have been cleared."));
 							player.sendMessage(new TextComponentString("Generating new file with all online users."));
 						} else if ("clearOffline".equalsIgnoreCase(args[1])) {
 
-							HideNames.instance.removeOfflinePlayers();
+							HideNames.INSTANCE.removeOfflinePlayers();
 							player.sendMessage(new TextComponentString("All offline players have been removed"));
 
 						} else if ("saveOfflinePlayers".equalsIgnoreCase(args[1])) {
@@ -183,11 +184,11 @@ public class CommandName extends CommandBase {
 					if (args.length == 3) {
 						EntityPlayerMP targetPlayer = FMLCommonHandler.instance().getMinecraftServerInstance().getServer().getPlayerList().getPlayerByUsername(args[1]);
 						if ("on".equalsIgnoreCase(args[2]) || "show".equalsIgnoreCase(args[2]) || "visible".equalsIgnoreCase(args[2])) {
-							HideNames.instance.updateHiddenPlayers(targetPlayer.getCommandSenderEntity().getName(), false);
+							HideNames.INSTANCE.updateHiddenPlayers(targetPlayer.getCommandSenderEntity().getName(), false);
 							targetPlayer.sendMessage(new TextComponentString(sender.getCommandSenderEntity().getName() + " set your name to be: " + TextFormatting.DARK_RED + "Visible"));
 							player.sendMessage(new TextComponentString(targetPlayer.getCommandSenderEntity().getName() + "'s name is now: " + TextFormatting.DARK_RED + "Visible"));
 						} else if ("off".equalsIgnoreCase(args[2]) || "hide".equalsIgnoreCase(args[2]) || "hidden".equalsIgnoreCase(args[2])) {
-							HideNames.instance.updateHiddenPlayers(targetPlayer.getCommandSenderEntity().getName(), true);
+							HideNames.INSTANCE.updateHiddenPlayers(targetPlayer.getCommandSenderEntity().getName(), true);
 							targetPlayer.sendMessage(new TextComponentString(sender.getCommandSenderEntity().getName() + " set your name to be: " + TextFormatting.GREEN + "Hidden"));
 							player.sendMessage(new TextComponentString(targetPlayer.getCommandSenderEntity().getName() + "'s name is now: " + TextFormatting.GREEN + "Hidden"));
 						} else {
@@ -208,7 +209,7 @@ public class CommandName extends CommandBase {
 	}
 
 	@Override
-	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
 		boolean isOp = TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName()) ||
 				(!FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isDedicatedServer() && FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isSinglePlayer());
 

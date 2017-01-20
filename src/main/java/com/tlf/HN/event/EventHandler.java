@@ -28,7 +28,8 @@ public class EventHandler {
 	public void onRenderLiving(RenderLivingEvent.Specials.Pre event) {
 		if (event.getEntity() instanceof EntityPlayer) {
 			if (event.isCancelable()) {
-				Object hidden = HideNames.instance.hiddenPlayers.get(event.getEntity().getCommandSenderEntity().getName().toLowerCase());
+				Object hidden = HideNames.INSTANCE.hiddenPlayers.get(
+						event.getEntity().getCommandSenderEntity().getName().toLowerCase());
 				if (hidden != null && (Boolean) hidden) {
 					event.setCanceled(true);
 				}
@@ -39,7 +40,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!client) {
-			HideNames.instance.onClientConnect(event.player);
+			HideNames.INSTANCE.onClientConnect(event.player);
 		}
 	}
 
@@ -52,19 +53,19 @@ public class EventHandler {
 
 	private void onTickInGame() {
 		if (!HideNames.saveOfflinePlayers) {
-			HideNames.instance.removeOfflinePlayers();
+			HideNames.INSTANCE.removeOfflinePlayers();
 		}
 
-		HideNames.instance.checkFile();
+		HideNames.INSTANCE.checkFile();
 
 		String[] users = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOnlinePlayerNames();
 		for (String user : users) {
-			if (!HideNames.instance.hiddenPlayers.containsKey(user.toLowerCase())
-					|| HideNames.instance.hiddenPlayers.get(user.toLowerCase()) == null) {
+			if (!HideNames.INSTANCE.hiddenPlayers.containsKey(user.toLowerCase())
+					|| HideNames.INSTANCE.hiddenPlayers.get(user.toLowerCase()) == null) {
 
 				EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance()
 						.getServer().getPlayerList().getPlayerByUsername(user);
-				HideNames.instance.updateHiddenPlayers(user, HideNames.defaultHiddenStatus);
+				HideNames.INSTANCE.updateHiddenPlayers(user, HideNames.defaultHiddenStatus);
 				player.sendMessage(new TextComponentString(
 						"Your name is: " + (HideNames.defaultHiddenStatus ? "\u00a7a Hidden" : "\u00a74 Visible")));
 			}
@@ -73,7 +74,7 @@ public class EventHandler {
 		if (tickCount == 20) {
 			tickCount = 0;
 
-			Configuration tempConfig = HideNames.instance.config;
+			Configuration tempConfig = HideNames.INSTANCE.config;
 			tempConfig.load();
 
 			if (HideNames.defaultHiddenStatus != tempConfig.get(Configuration.CATEGORY_GENERAL, "defaultHiddenStatus", false, "Default state for new players").getBoolean(false)) {
@@ -81,10 +82,10 @@ public class EventHandler {
 				temp.set(HideNames.defaultHiddenStatus);
 			}
 
-			if (HideNames.showHiddenMessage != tempConfig.get(Configuration.CATEGORY_GENERAL, "showHiddenMessage",
-					true, "").getBoolean(true)) {
-				Property temp = tempConfig.get(Configuration.CATEGORY_GENERAL, "showHiddenMessage", true, "");
-				temp.set(HideNames.showHiddenMessage);
+			if (HideNames.showHideStatusOnJoin != tempConfig.get(Configuration.CATEGORY_GENERAL, "showHideStatusOnJoin",
+					true, "Showing information about hide status after enter the game").getBoolean(true)) {
+				Property temp = tempConfig.get(Configuration.CATEGORY_GENERAL, "showHideStatusOnJoin", true, "Showing information about hide status after enter the game");
+				temp.set(HideNames.showHideStatusOnJoin);
 			}
 
 			if (HideNames.saveOfflinePlayers != tempConfig.get(Configuration.CATEGORY_GENERAL, "saveOfflinePlayers", true, "Whether or not to keep players in 'hidden.txt' if they are offline - useful for big servers").getBoolean(true)) {

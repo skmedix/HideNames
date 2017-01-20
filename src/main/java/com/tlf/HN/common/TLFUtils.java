@@ -17,6 +17,7 @@ public class TLFUtils {
 	}
 
 	public static boolean isPlayerOp(String username) {
-		return isStringInArray(FMLCommonHandler.instance().getMinecraftServerInstance().getServer().getPlayerList().getOppedPlayerNames(), username, true);
+		return isStringInArray(FMLCommonHandler.instance().getMinecraftServerInstance()
+				.getServer().getPlayerList().getOppedPlayerNames(), username, true);
 	}
 }

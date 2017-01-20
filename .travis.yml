@@ -9,3 +9,6 @@ jdk:
 
 install: ./gradlew setupDecompWorkspace
 script: ./gradlew build
+
+notifications:
+  email: false

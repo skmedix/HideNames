@@ -40,8 +40,8 @@ public class PacketHNChange implements IMessage {
 	public static class Handler implements IMessageHandler<PacketHNChange, IMessage> {
 		@Override
 		public IMessage onMessage(PacketHNChange message, MessageContext ctx) {
-			HideNames.instance.hiddenPlayers.remove(message.username);
-			HideNames.instance.hiddenPlayers.put(message.username, message.newState);
+			HideNames.INSTANCE.hiddenPlayers.remove(message.username);
+			HideNames.INSTANCE.hiddenPlayers.put(message.username, message.newState);
 			return null; //Reply
 		}
 	}

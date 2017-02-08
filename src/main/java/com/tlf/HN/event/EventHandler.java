@@ -82,10 +82,10 @@ public class EventHandler {
 				temp.set(HideNames.defaultHiddenStatus);
 			}
 
-			if (HideNames.showHideStatusOnJoin != tempConfig.get(Configuration.CATEGORY_GENERAL, "showHideStatusOnJoin",
+			if (HideNames.showHideStatusOnLogin != tempConfig.get(Configuration.CATEGORY_GENERAL, "showHideStatusOnLogin",
 					true, "Showing information about hide status after enter the game").getBoolean(true)) {
-				Property temp = tempConfig.get(Configuration.CATEGORY_GENERAL, "showHideStatusOnJoin", true, "Showing information about hide status after enter the game");
-				temp.set(HideNames.showHideStatusOnJoin);
+				Property temp = tempConfig.get(Configuration.CATEGORY_GENERAL, "showHideStatusOnLogin", true, "Showing information about hide status after enter the game");
+				temp.set(HideNames.showHideStatusOnLogin);
 			}
 
 			if (HideNames.saveOfflinePlayers != tempConfig.get(Configuration.CATEGORY_GENERAL, "saveOfflinePlayers", true, "Whether or not to keep players in 'hidden.txt' if they are offline - useful for big servers").getBoolean(true)) {

@@ -20,7 +20,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +34,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Mod(modid = HideNames.MODID, name = HideNames.NAME,
-		version = HideNames.VERSION, updateJSON = "http://s1.skmedix.pl/mods/hidenames.json")
+@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION,
+		updateJSON = "http://s1.skmedix.pl/mods/hidenames.json")
 public class HideNames {
 	public static final String MODID = "hidenames";
 	public static final String NAME = "HideNames";
@@ -73,7 +79,7 @@ public class HideNames {
 	public static boolean defaultHiddenStatus;
 	public static boolean saveOfflinePlayers;
 	public static boolean allowCommand;
-	public static boolean showHideStatusOnJoin;
+	public static boolean showHideStatusOnLogin;
 
 	private ModMetadata metadata;
 
@@ -88,7 +94,7 @@ public class HideNames {
 
 		defaultHiddenStatus = config.get(Configuration.CATEGORY_GENERAL, "defaultHiddenStatus",
 				false, "Default state for new players").getBoolean(false);
-		showHideStatusOnJoin = config.get(Configuration.CATEGORY_GENERAL, "showHideStatusOnJoin",
+		showHideStatusOnLogin = config.get(Configuration.CATEGORY_GENERAL, "showHideStatusOnLogin",
 				true, "Showing information about hide status after enter the game").getBoolean(true);
 		saveOfflinePlayers = config.get(Configuration.CATEGORY_GENERAL, "saveOfflinePlayers",
 				true, "Whether or not to keep players in 'hidden.txt' if they are offline - useful for big servers").getBoolean(true);
@@ -200,7 +206,7 @@ public class HideNames {
 	 * {@link #defaultHiddenStatus defaultHiddenStatus} is set to. If they are in {@link #fileHiddenPlayers hidden.txt}, then their hidden status is whatever is
 	 * said in {@link #fileHiddenPlayers hidden.txt}
 	 *
-	 * @param player
+	 * @param @EntityPlayer#player
 	 */
 	public void onClientConnect(EntityPlayer player) {
 		for (String user : hiddenPlayers.keySet()) {
@@ -215,7 +221,7 @@ public class HideNames {
 			updateHiddenPlayers(username, hiddenPlayers.get(username));
 		}
 
-		if (HideNames.showHideStatusOnJoin) {
+		if (HideNames.showHideStatusOnLogin) {
 			player.sendMessage(new TextComponentString("Your name is: " +
 					(hiddenPlayers.get(username) ? "\u00a7aHidden" : "\u00a74Visible")));
 		}
@@ -237,6 +243,7 @@ public class HideNames {
 				out.write("\n" + mEntry.getKey() + ":" + ((Boolean) mEntry.getValue() ? "true" : "false"));
 			}
 			out.close();
+			fstream.close();
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error: " + e.getMessage());
 		}
@@ -258,7 +265,9 @@ public class HideNames {
 			updateHiddenPlayers(username, hidden);
 
 			if (!username.equalsIgnoreCase(sender)) {
-				HideNames.playerForName(username).sendMessage(new TextComponentString(sender + " set your name to be: " + (hiddenPlayers.get(username) ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
+				HideNames.playerForName(username).sendMessage(new TextComponentString(sender +
+						" set your name to be: " +
+						(hiddenPlayers.get(username) ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
 			}
 		}
 	}

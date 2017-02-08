@@ -1,8 +1,7 @@
 package com.tlf.HN.common;
 
 import com.tlf.HN.commands.CommandName;
-import com.tlf.HN.event.HNEventHandlerCPW;
-import com.tlf.HN.event.HNEventHandlerForge;
+import com.tlf.HN.event.EventHandler;
 import com.tlf.HN.network.packet.PacketHNChange;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,7 +20,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,17 +34,18 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION, updateJSON = "http://s1.skmedix.pl/mods/hidenames.json")
+@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION,
+		updateJSON = "http://s1.skmedix.pl/mods/hidenames.json", acceptedMinecraftVersions="[1.10.2]")
 public class HideNames {
 	public static final String MODID = "hidenames";
 	public static final String NAME = "HideNames";
-	public static final String VERSION = "1.2";
+	public static final String VERSION = "1.3";
 
 	/**
-	 * The public instance
+	 * The public INSTANCE
 	 */
 	@Mod.Instance(HideNames.MODID)
-	public static HideNames instance;
+	public static HideNames INSTANCE;
 
 	/**
 	 * The {@link Configuration} for Hide Names
@@ -55,8 +61,8 @@ public class HideNames {
 	/**
 	 * All players currently in the file {@link #fileHiddenPlayers hidden.txt}
 	 */
-	public final Map<String, Boolean> hiddenPlayers = new HashMap<String, Boolean>();
-	public final Logger logger = Logger.getLogger("Minecraft");
+	public final Map<String, Boolean> hiddenPlayers = new HashMap<>();
+	public final Logger LOGGER = Logger.getLogger("Minecraft");
 
 	public static final int commandPermissionLevel = 0;
 	public static final String commandName1 = "name";
@@ -73,6 +79,7 @@ public class HideNames {
 	public static boolean defaultHiddenStatus;
 	public static boolean saveOfflinePlayers;
 	public static boolean allowCommand;
+	public static boolean showHideStatusOnLogin;
 
 	private ModMetadata metadata;
 
@@ -85,12 +92,18 @@ public class HideNames {
 
 		config.load();
 
-		defaultHiddenStatus = config.get(Configuration.CATEGORY_GENERAL, "defaultHiddenStatus", false, "Default state for new players").getBoolean(false);
-		saveOfflinePlayers = config.get(Configuration.CATEGORY_GENERAL, "saveOfflinePlayers", true, "Whether or not to keep players in 'hidden.txt' if they are offline - useful for big servers").getBoolean(true);
-		allowCommand = config.get(Configuration.CATEGORY_GENERAL, "allowCommand", true, "Whether or not non-ops can use the /name command").getBoolean(true);
-		serverFilePath = config.get(Configuration.CATEGORY_GENERAL, "serverFilePath", "", "Where the file 'hidden.txt' should be on a dedicated server - NOTE: all directories are located within the server folder").getString();
-		clientFilePath = config.get(Configuration.CATEGORY_GENERAL, "clientFilePath", "/config/tlf", "Where the file 'hidden.txt' should be on a client/LAN server - NOTE: all directories are located within the '.minecraft' folder").getString();
-
+		defaultHiddenStatus = config.get(Configuration.CATEGORY_GENERAL, "defaultHiddenStatus",
+				false, "Default state for new players").getBoolean(false);
+		showHideStatusOnLogin = config.get(Configuration.CATEGORY_GENERAL, "showHideStatusOnLogin",
+				true, "Showing information about hide status after enter the game").getBoolean(true);
+		saveOfflinePlayers = config.get(Configuration.CATEGORY_GENERAL, "saveOfflinePlayers",
+				true, "Whether or not to keep players in 'hidden.txt' if they are offline - useful for big servers").getBoolean(true);
+		allowCommand = config.get(Configuration.CATEGORY_GENERAL, "allowCommand",
+				true, "Whether or not non-ops can use the /name command").getBoolean(true);
+		serverFilePath = config.get(Configuration.CATEGORY_GENERAL, "serverFilePath",
+				"", "Where the file 'hidden.txt' should be on a dedicated server - NOTE: all directories are located within the server folder").getString();
+		clientFilePath = config.get(Configuration.CATEGORY_GENERAL, "clientFilePath",
+				"/config/tlf", "Where the file 'hidden.txt' should be on a client/LAN server - NOTE: all directories are located within the '.minecraft' folder").getString();
 		config.save();
 
 		this.network = NetworkRegistry.INSTANCE.newSimpleChannel(this.channel);
@@ -99,13 +112,12 @@ public class HideNames {
 
 	@Mod.EventHandler
 	public void onModInit(FMLInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new HNEventHandlerForge());
-		MinecraftForge.EVENT_BUS.register(new HNEventHandlerCPW());
+		MinecraftForge.EVENT_BUS.register(new EventHandler());
 	}
 
 	@Mod.EventHandler
 	public void onModLoad(FMLPostInitializationEvent event) {
-		System.out.println(metadata.name + " " + metadata.version + " loaded!");
+		LOGGER.info(metadata.name + " " + metadata.version + " loaded!");
 	}
 
 	@Mod.EventHandler
@@ -181,11 +193,11 @@ public class HideNames {
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
-			logger.log(Level.FINE, "Error: File " + fileHiddenPlayers + " not found.");
-			logger.log(Level.FINE, "Creating file " + fileHiddenPlayers);
+			LOGGER.log(Level.FINE, "Error: File " + fileHiddenPlayers + " not found.");
+			LOGGER.log(Level.FINE, "Creating file " + fileHiddenPlayers);
 			createFile(fileHiddenPlayers);
 		} catch (IOException e) {
-			logger.log(Level.WARNING, "Error: " + e.getMessage());
+			LOGGER.log(Level.WARNING, "Error: " + e.getMessage());
 		}
 	}
 
@@ -194,7 +206,7 @@ public class HideNames {
 	 * {@link #defaultHiddenStatus defaultHiddenStatus} is set to. If they are in {@link #fileHiddenPlayers hidden.txt}, then their hidden status is whatever is
 	 * said in {@link #fileHiddenPlayers hidden.txt}
 	 *
-	 * @param player
+	 * @param @EntityPlayer#player
 	 */
 	public void onClientConnect(EntityPlayer player) {
 		for (String user : hiddenPlayers.keySet()) {
@@ -209,7 +221,10 @@ public class HideNames {
 			updateHiddenPlayers(username, hiddenPlayers.get(username));
 		}
 
-		player.addChatMessage(new TextComponentString("Your name is: " + (hiddenPlayers.get(username) ? "\u00a7aHidden" : "\u00a74Visible")));
+		if (HideNames.showHideStatusOnLogin) {
+			player.addChatMessage(new TextComponentString("Your name is: " +
+					(hiddenPlayers.get(username) ? "\u00a7aHidden" : "\u00a74Visible")));
+		}
 	}
 
 	/**
@@ -217,7 +232,7 @@ public class HideNames {
 	 *
 	 * @param file The location to create the file
 	 */
-	public void createFile(String file) {
+	private void createFile(String file) {
 		try {
 			FileWriter fstream = new FileWriter(file);
 			BufferedWriter out = new BufferedWriter(fstream);
@@ -228,8 +243,9 @@ public class HideNames {
 				out.write("\n" + mEntry.getKey() + ":" + ((Boolean) mEntry.getValue() ? "true" : "false"));
 			}
 			out.close();
+			fstream.close();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Error: " + e.getMessage());
+			LOGGER.log(Level.WARNING, "Error: " + e.getMessage());
 		}
 	}
 
@@ -239,7 +255,7 @@ public class HideNames {
 	 * @param hidden The state to set all players to
 	 */
 	public void setAll(String sender, boolean hidden) {
-		List<String> users = new ArrayList<String>();
+		List<String> users = new ArrayList<>();
 		for (Map.Entry<String, Boolean> entry : hiddenPlayers.entrySet()) {
 			String key = entry.getKey();
 			users.add(key);
@@ -249,8 +265,9 @@ public class HideNames {
 			updateHiddenPlayers(username, hidden);
 
 			if (!username.equalsIgnoreCase(sender)) {
-				HideNames.playerForName(username)
-						.addChatMessage(new TextComponentString(sender + " set your name to be: " + (hiddenPlayers.get(username) ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
+				HideNames.playerForName(username).addChatMessage(new TextComponentString(sender +
+						" set your name to be: " +
+						(hiddenPlayers.get(username) ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
 			}
 		}
 	}

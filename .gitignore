@@ -20,9 +20,11 @@ proguard/
 *.ipr
 *.iws
 .idea/
+classes/
 
 #Gradle
 .gradletasknamecache
 .gradle/
 build/
 bin/
+run/

@@ -1,0 +1,17 @@
+[
+{
+  "modid": "hidenames",
+  "name": "HideNames",
+  "description": "Adds commands to hide and show the name that displays above your head.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "logoFile": "",
+  "url": "https://skmedix.pl/hidenames/",
+  "updateUrl": "",
+  "authors": ["thislooksfun", "skmedix"],
+  "credits": "This mod was originally maintained by @thislooksfun, huge thanks to all his work!",
+  "parent": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

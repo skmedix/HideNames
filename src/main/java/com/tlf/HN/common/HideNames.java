@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 public class HideNames {
 	public static final String MODID = "hidenames";
 	public static final String NAME = "HideNames";
-	public static final String VERSION = "1.3";
+	public static final String VERSION = "1.4";
 
 	/**
 	 * The public INSTANCE

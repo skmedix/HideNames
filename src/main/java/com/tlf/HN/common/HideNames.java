@@ -34,8 +34,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION,
-		updateJSON = "http://s1.skmedix.pl/mods/hidenames.json")
+@Mod(modid = HideNames.MODID, name = HideNames.NAME, version = HideNames.VERSION)
 public class HideNames {
 	public static final String MODID = "hidenames";
 	public static final String NAME = "HideNames";

@@ -31,7 +31,7 @@ public class CommandName extends CommandBase {
 
 	@Override
 	public List<String> getAliases() {
-		List list = new ArrayList<>();
+		List<String> list = new ArrayList<>();
 		list.add(HideNames.commandName1);
 		list.add(HideNames.commandName2);
 		return list;

@@ -39,9 +39,7 @@ public class CommandName extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		if (TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName()) ||
-				(!FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isDedicatedServer()
-						&& FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isSinglePlayer())) {
+		if (!TLFUtils.isServer() || (sender.getCommandSenderEntity() != null && TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName()))) {
 			return "/name(s) <all|set|toggle|hide|show|option>";
 		} else {
 			return "/name(s) <toggle|hide|show>";
@@ -59,7 +57,7 @@ public class CommandName extends CommandBase {
 
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 		boolean isOp;
-		if (FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isDedicatedServer()) {
+		if (TLFUtils.isServer()) {
 			isOp = TLFUtils.isPlayerOp(player.getCommandSenderEntity().getName());
 		} else {
 			isOp = TLFUtils.isPlayerOp(player.getCommandSenderEntity().getName()) || FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner().equalsIgnoreCase(player.getCommandSenderEntity().getName());
@@ -74,19 +72,19 @@ public class CommandName extends CommandBase {
 
 				player.sendMessage(new TextComponentString("Your name is now: " + (HideNames.INSTANCE.hiddenPlayers.get(player.getCommandSenderEntity().getName().toLowerCase()) ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
 
-			///name(s) on
+				///name(s) on
 			} else if ("on".equalsIgnoreCase(args[0]) || "show".equalsIgnoreCase(args[0]) || "visible".equalsIgnoreCase(args[0])) {
 
 				HideNames.INSTANCE.updateHiddenPlayers(player.getCommandSenderEntity().getName(), false);
 				player.sendMessage(new TextComponentString("Your name is now: " + TextFormatting.DARK_RED + "Visible"));
 
-			///name(s) off
+				///name(s) off
 			} else if ("off".equalsIgnoreCase(args[0]) || "hide".equalsIgnoreCase(args[0]) || "hidden".equalsIgnoreCase(args[0])) {
 
 				HideNames.INSTANCE.updateHiddenPlayers(player.getCommandSenderEntity().getName(), true);
 				player.sendMessage(new TextComponentString("Your name is now: " + TextFormatting.GREEN + "Hidden"));
 
-			///name(s) all <on|off>
+				///name(s) all <on|off>
 			} else if ("all".equalsIgnoreCase(args[0])) {
 				if (isOp) {
 					if (args.length > 1) {
@@ -111,7 +109,7 @@ public class CommandName extends CommandBase {
 							"You do not have permission to use this command."));
 				}
 
-			///name(s) option <default|clear|clearOffline|saveOfflinePlayers|allowCommand|showMessage>
+				///name(s) option <default|clear|clearOffline|saveOfflinePlayers|allowCommand|showMessage>
 			} else if ("option".equalsIgnoreCase(args[0]) || "options".equalsIgnoreCase(args[0])) {
 				if (isOp) {
 					if (args.length > 1) {
@@ -123,13 +121,13 @@ public class CommandName extends CommandBase {
 							player.sendMessage(new TextComponentString("All hidden players have been cleared."));
 							player.sendMessage(new TextComponentString("Generating new file with all online users."));
 
-						///name(s) option clearOffline
+							///name(s) option clearOffline
 						} else if ("clearOffline".equalsIgnoreCase(args[1])) {
 
 							HideNames.INSTANCE.removeOfflinePlayers();
 							player.sendMessage(new TextComponentString("All offline players have been removed"));
 
-						///name(s) option default
+							///name(s) option default
 						} else if ("default".equalsIgnoreCase(args[1])) {
 							if (args.length == 3) {
 								if ("on".equalsIgnoreCase(args[2]) || "visible".equalsIgnoreCase(args[2])) {
@@ -145,7 +143,7 @@ public class CommandName extends CommandBase {
 								player.sendMessage(new TextComponentString("Default: " + (HideNames.defaultHiddenStatus ? TextFormatting.GREEN + "Hidden" : TextFormatting.DARK_RED + "Visible")));
 							}
 
-						///name(s) option showMessageOnLogin
+							///name(s) option showMessageOnLogin
 						} else if ("showMessageOnLogin".equalsIgnoreCase(args[1])) {
 							if (args.length == 3) {
 								if ("on".equalsIgnoreCase(args[2]) || "true".equalsIgnoreCase(args[2])) {
@@ -163,7 +161,7 @@ public class CommandName extends CommandBase {
 								player.sendMessage(new TextComponentString("showMessageOnLogin: " + HideNames.colorBool(HideNames.showHideStatusOnLogin)));
 							}
 
-						///name(s) option saveOfflinePlayers [true|false]
+							///name(s) option saveOfflinePlayers [true|false]
 						} else if ("saveOfflinePlayers".equalsIgnoreCase(args[1])) {
 							if (args.length == 3) {
 								if ("true".equalsIgnoreCase(args[2])) {
@@ -179,7 +177,7 @@ public class CommandName extends CommandBase {
 								player.sendMessage(new TextComponentString("SaveOfflinePlayers: " + HideNames.colorBool(HideNames.saveOfflinePlayers)));
 							}
 
-						///name(s) option allowCommand [true|false]
+							///name(s) option allowCommand [true|false]
 						} else if ("allowCommand".equalsIgnoreCase(args[1])) {
 							if (args.length == 3) {
 								if ("true".equalsIgnoreCase(args[2])) {
@@ -204,7 +202,7 @@ public class CommandName extends CommandBase {
 					player.sendMessage(new TextComponentString(TextFormatting.RED + "You do not have permission to use this command."));
 				}
 
-			///name(s) set <player> <on|off>
+				///name(s) set <player> <on|off>
 			} else if ("set".equalsIgnoreCase(args[0])) {
 				if (isOp) {
 					if (args.length == 3) {
@@ -236,9 +234,7 @@ public class CommandName extends CommandBase {
 
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
-		boolean isOp = TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName()) ||
-				(!FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isDedicatedServer()
-						&& FMLCommonHandler.instance().getMinecraftServerInstance().getServer().isSinglePlayer());
+		boolean isOp = TLFUtils.isPlayerOp(sender.getCommandSenderEntity().getName()) || !TLFUtils.isServer();
 
 		if (args.length == 1) {
 			return getListOfStringsMatchingLastWord(args, (isOp) ? new String[]{"all", "set", "toggle", "hide", "show", "status", "option"} : new String[]{"toggle", "hide", "show", "status", "default"});
